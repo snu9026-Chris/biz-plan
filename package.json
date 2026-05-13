@@ -1,0 +1,81 @@
+{
+  "name": "biz-plan-agent",
+  "displayName": "Biz Plan Agent",
+  "description": "7-step business plan pipeline with character agents (Research → Brief → Office Hours → Decision → Guide A → CEO Review → Final)",
+  "version": "0.1.0",
+  "publisher": "snu90",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bizPlanAgent",
+          "title": "Biz Plan Agent",
+          "icon": "$(rocket)"
+        }
+      ]
+    },
+    "views": {
+      "bizPlanAgent": [
+        {
+          "id": "bizPlanAgent.sidebar",
+          "name": "Agents",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "bizPlanAgent.openAgent",
+        "title": "Biz Plan: Open Agent"
+      },
+      {
+        "command": "bizPlanAgent.reset",
+        "title": "Biz Plan: Reset Pipeline"
+      }
+    ],
+    "configuration": {
+      "title": "Biz Plan Agent",
+      "properties": {
+        "bizPlanAgent.anthropicApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key. Leave empty to use Claude Code subscription auth via Agent SDK."
+        },
+        "bizPlanAgent.useClaudeCodeAuth": {
+          "type": "boolean",
+          "default": true,
+          "description": "If true, use Claude Code subscription tokens. If false, use API key (per-token billing)."
+        },
+        "bizPlanAgent.model": {
+          "type": "string",
+          "default": "claude-opus-4-7",
+          "description": "Claude model id."
+        },
+        "bizPlanAgent.workspaceFolder": {
+          "type": "string",
+          "default": "biz-plan-results",
+          "description": "Folder name (in workspace root) where step outputs are saved."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@anthropic-ai/claude-agent-sdk": "^0.1.0",
+    "@anthropic-ai/sdk": "^0.30.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^2.20.0"
+  }
+}

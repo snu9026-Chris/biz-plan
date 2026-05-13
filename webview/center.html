@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>/*CSS*/</style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+
+  <div class="layout">
+    <!-- Brand ticker — global top, always visible -->
+    <div class="ticker-section global-top">
+      <div class="ticker-label">POWERED BY METHODOLOGIES OF</div>
+      <div class="ticker">
+        <div class="ticker-track">
+          <span class="brand mckinsey">McKinsey<span class="amp">&amp;</span>Company</span>
+          <span class="brand bcg">BCG</span>
+          <span class="brand bain">Bain<span class="amp">&amp;</span>Company</span>
+          <span class="brand jpm">J.P.Morgan</span>
+          <span class="brand goldman">Goldman Sachs</span>
+          <span class="brand yc"><span class="yc-box">Y</span><span class="yc-text">Combinator</span></span>
+          <span class="brand sequoia">Sequoia<span class="seq-cap">Capital</span></span>
+          <span class="brand a16z">a16z</span>
+          <span class="brand samsung"><span class="sam-mark">SAMSUNG</span><span class="sam-next">NEXT</span></span>
+          <span class="brand anthropic"><span class="anth-mark">✱</span>Anthropic</span>
+          <span class="brand openai"><svg class="oai-mark" viewBox="0 0 320 320" fill="currentColor" aria-hidden="true"><path d="M297.06 130.97a80.54 80.54 0 0 0-6.93-66.16c-17.22-29.83-51.49-45.18-85-38.07A80.65 80.65 0 0 0 144.4 0a80.6 80.6 0 0 0-76.84 55.7 80.55 80.55 0 0 0-53.84 39.06 80.7 80.7 0 0 0 9.93 94.55 80.54 80.54 0 0 0 6.92 66.17c17.23 29.82 51.5 45.17 85.01 38.07A80.6 80.6 0 0 0 175.6 320a80.6 80.6 0 0 0 76.86-55.74 80.5 80.5 0 0 0 53.84-39.06 80.7 80.7 0 0 0-9.93-94.55Zm-120.28 168.1a59.83 59.83 0 0 1-38.34-13.85c.49-.27 1.34-.74 1.9-1.08l63.72-36.8a10.4 10.4 0 0 0 5.24-9.07v-89.83l26.93 15.55c.29.14.48.42.52.74v74.39c-.04 33.08-26.83 59.9-59.97 59.95Zm-128.84-55.03a59.75 59.75 0 0 1-7.15-40.18c.47.28 1.3.79 1.89 1.13l63.72 36.8a10.36 10.36 0 0 0 10.47 0l77.79-44.92v31.1c.02.32-.13.63-.38.83l-64.41 37.19c-28.69 16.54-65.39 6.7-81.93-21.95Zm-16.77-139.09c7-12.16 18.05-21.46 31.21-26.29 0 .55-.03 1.52-.03 2.2v73.61a10.36 10.36 0 0 0 5.23 9.06l77.79 44.91-26.93 15.55a.96.96 0 0 1-.91.08L73.4 187.8c-28.63-16.59-38.45-53.27-21.94-81.95Zm221.26 51.49-77.79-44.92 26.93-15.54a.96.96 0 0 1 .91-.08l64.42 37.16c28.68 16.57 38.51 53.26 21.94 81.94a59.94 59.94 0 0 1-31.2 26.29V194.7a10.55 10.55 0 0 0-5.21-9.13Zm26.8-40.34c-.47-.29-1.3-.79-1.89-1.13l-63.72-36.8a10.38 10.38 0 0 0-10.47 0l-77.79 44.92v-31.1a.95.95 0 0 1 .38-.83l64.41-37.16c28.69-16.55 65.42-6.7 81.95 22.01a59.95 59.95 0 0 1 7.15 40.1Zm-168.51 55.43-26.94-15.55a.96.96 0 0 1-.52-.74V80.86c.02-33.12 26.89-59.94 60.04-59.92 13.7 0 26.95 4.73 37.61 13.34-.49.27-1.33.74-1.9 1.08l-63.72 36.8a10.36 10.36 0 0 0-5.24 9.06l-.04 89.79Zm14.63-31.54 34.65-20.01 34.65 20v40.01l-34.65 20-34.65-20-.01-40.01Z"/></svg>OpenAI</span>
+          <!-- Duplicate for seamless loop -->
+          <span class="brand mckinsey">McKinsey<span class="amp">&amp;</span>Company</span>
+          <span class="brand bcg">BCG</span>
+          <span class="brand bain">Bain<span class="amp">&amp;</span>Company</span>
+          <span class="brand jpm">J.P.Morgan</span>
+          <span class="brand goldman">Goldman Sachs</span>
+          <span class="brand yc"><span class="yc-box">Y</span><span class="yc-text">Combinator</span></span>
+          <span class="brand sequoia">Sequoia<span class="seq-cap">Capital</span></span>
+          <span class="brand a16z">a16z</span>
+          <span class="brand samsung"><span class="sam-mark">SAMSUNG</span><span class="sam-next">NEXT</span></span>
+          <span class="brand anthropic"><span class="anth-mark">✱</span>Anthropic</span>
+          <span class="brand openai"><svg class="oai-mark" viewBox="0 0 320 320" fill="currentColor" aria-hidden="true"><path d="M297.06 130.97a80.54 80.54 0 0 0-6.93-66.16c-17.22-29.83-51.49-45.18-85-38.07A80.65 80.65 0 0 0 144.4 0a80.6 80.6 0 0 0-76.84 55.7 80.55 80.55 0 0 0-53.84 39.06 80.7 80.7 0 0 0 9.93 94.55 80.54 80.54 0 0 0 6.92 66.17c17.23 29.82 51.5 45.17 85.01 38.07A80.6 80.6 0 0 0 175.6 320a80.6 80.6 0 0 0 76.86-55.74 80.5 80.5 0 0 0 53.84-39.06 80.7 80.7 0 0 0-9.93-94.55Zm-120.28 168.1a59.83 59.83 0 0 1-38.34-13.85c.49-.27 1.34-.74 1.9-1.08l63.72-36.8a10.4 10.4 0 0 0 5.24-9.07v-89.83l26.93 15.55c.29.14.48.42.52.74v74.39c-.04 33.08-26.83 59.9-59.97 59.95Zm-128.84-55.03a59.75 59.75 0 0 1-7.15-40.18c.47.28 1.3.79 1.89 1.13l63.72 36.8a10.36 10.36 0 0 0 10.47 0l77.79-44.92v31.1c.02.32-.13.63-.38.83l-64.41 37.19c-28.69 16.54-65.39 6.7-81.93-21.95Zm-16.77-139.09c7-12.16 18.05-21.46 31.21-26.29 0 .55-.03 1.52-.03 2.2v73.61a10.36 10.36 0 0 0 5.23 9.06l77.79 44.91-26.93 15.55a.96.96 0 0 1-.91.08L73.4 187.8c-28.63-16.59-38.45-53.27-21.94-81.95Zm221.26 51.49-77.79-44.92 26.93-15.54a.96.96 0 0 1 .91-.08l64.42 37.16c28.68 16.57 38.51 53.26 21.94 81.94a59.94 59.94 0 0 1-31.2 26.29V194.7a10.55 10.55 0 0 0-5.21-9.13Zm26.8-40.34c-.47-.29-1.3-.79-1.89-1.13l-63.72-36.8a10.38 10.38 0 0 0-10.47 0l-77.79 44.92v-31.1a.95.95 0 0 1 .38-.83l64.41-37.16c28.69-16.55 65.42-6.7 81.95 22.01a59.95 59.95 0 0 1 7.15 40.1Zm-168.51 55.43-26.94-15.55a.96.96 0 0 1-.52-.74V80.86c.02-33.12 26.89-59.94 60.04-59.92 13.7 0 26.95 4.73 37.61 13.34-.49.27-1.33.74-1.9 1.08l-63.72 36.8a10.36 10.36 0 0 0-5.24 9.06l-.04 89.79Zm14.63-31.54 34.65-20.01 34.65 20v40.01l-34.65 20-34.65-20-.01-40.01Z"/></svg>OpenAI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="agent-header">
+      <div class="avatar-big" id="avatar-big">
+        <span class="avatar-emoji" id="emoji"></span>
+        <div class="avatar-accessory" id="accessory"></div>
+      </div>
+      <div class="header-text">
+        <div class="agent-step" id="step"></div>
+        <h1 id="title"></h1>
+        <p class="subtitle" id="subtitle"></p>
+      </div>
+    </header>
+
+    <!-- Previous step (collapsible) -->
+    <details class="prev hidden" id="prev-section">
+      <summary>📎 이전 단계 결과 펼쳐보기</summary>
+      <pre id="prev-content"></pre>
+    </details>
+
+    <!-- Main grid: center + right (right hidden by default) -->
+    <div class="main-grid" id="main-grid">
+
+      <!-- ===== MAIN AREA ===== -->
+      <section class="main-area" id="main-area">
+
+        <!-- File upload (Office Hours only — inside main area, top) -->
+        <div class="upload-strip hidden" id="upload-section">
+          <div class="upload-zone-inline" id="upload-zone">
+            <input type="file" id="upload-input" accept=".md,.txt" multiple hidden>
+            <span class="upload-icon-inline">📎</span>
+            <span class="upload-text-inline">정리한 자료 있으면 <b>여기 끌어다 놓거나 클릭</b> (.md / .txt)</span>
+          </div>
+          <div class="uploaded-files" id="uploaded-files"></div>
+        </div>
+
+        <!-- Mode: chat -->
+        <div class="mode-container hidden" data-mode="chat">
+          <div class="chat" id="chat"></div>
+        </div>
+
+        <!-- Mode: research -->
+        <div class="mode-container hidden" data-mode="research">
+          <div class="research-result" id="research-result">
+            <div class="empty-state">
+              <div class="emoji-big-static" id="empty-emoji"></div>
+              <div class="empty-state-greeting" id="empty-greeting"></div>
+              <div class="empty-state-sub" id="empty-sub"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode: edit (Slide Agent) -->
+        <div class="mode-container hidden" data-mode="edit">
+          <div class="edit-toolbar">
+            <span class="edit-label">슬라이드 .md (직접 편집)</span>
+            <button class="ghost small" id="edit-reload">↻ 이전 결과 다시 불러오기</button>
+          </div>
+          <textarea class="md-editor" id="md-editor" placeholder="이전 단계 결과가 여기에 자동 로드됩니다. 직접 수정하세요..."></textarea>
+        </div>
+
+      </section>
+
+      <!-- ===== RIGHT AREA (hidden until finalize) ===== -->
+      <aside class="right-area" id="right-area">
+        <div class="right-content" id="right-content">
+          <!-- Right: Secretary comprehensive guide (only for 비서) -->
+          <div class="right-mode hidden" data-rightmode="secretary">
+            <div class="secretary-guide" id="secretary-guide-host">
+              <!-- Header -->
+              <div class="sg-header">
+                <div class="sg-mascot-orb" id="sg-mascot-orb">💁</div>
+                <div>
+                  <div class="sg-title">사용 가이드</div>
+                  <div class="sg-sub">사업 아이디어 → Claude Design 입력까지 5단계</div>
+                </div>
+              </div>
+
+              <!-- Folder picker -->
+              <section class="sg-folder-picker">
+                <div class="sg-folder-row">
+                  <span class="sg-folder-icon">📁</span>
+                  <div class="sg-folder-info">
+                    <div class="sg-folder-label">결과물(.md) 저장 폴더</div>
+                    <div class="sg-folder-path" id="sg-folder-path">아직 선택 안 됨 — 워크스페이스 기본값</div>
+                  </div>
+                  <button class="sg-folder-btn" id="sg-folder-btn">📁 폴더 선택</button>
+                </div>
+              </section>
+
+              <!-- Pipeline diagram -->
+              <section class="sg-section">
+                <div class="sg-section-title">📊 파이프라인 흐름</div>
+                <div class="sg-pipeline">
+                  <div class="sg-step" style="--step-c:#f59e0b">
+                    <div class="sg-step-row">
+                      <div class="sg-step-emoji">📋</div>
+                      <div class="sg-step-info">
+                        <div class="sg-step-name">과장님</div>
+                        <div class="sg-step-desc">11개 질문으로 wedge 6 기준 + 사용자 에셋 검증</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sg-arrow">↓</div>
+                  <div class="sg-step" style="--step-c:#34d399">
+                    <div class="sg-step-row">
+                      <div class="sg-step-emoji">🔬</div>
+                      <div class="sg-step-info">
+                        <div class="sg-step-name">리서처</div>
+                        <div class="sg-step-desc">인터넷에서 시장·경쟁·수치 객관 자료 수집</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sg-arrow">↓</div>
+                  <div class="sg-step" style="--step-c:#38bdf8">
+                    <div class="sg-step-row">
+                      <div class="sg-step-emoji">📐</div>
+                      <div class="sg-step-info">
+                        <div class="sg-step-name">에이스 팀원</div>
+                        <div class="sg-step-desc">Guide A 기반 슬라이드 목차 + 메시지 (.md 직접 편집)</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sg-arrow">↓</div>
+                  <div class="sg-step" style="--step-c:#6366f1">
+                    <div class="sg-step-row">
+                      <div class="sg-step-emoji">👔</div>
+                      <div class="sg-step-info">
+                        <div class="sg-step-name">부장님</div>
+                        <div class="sg-step-desc">CEO Review 가이드로 가차없이 검토 + 최종본</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="sg-arrow">↓</div>
+                  <div class="sg-step" style="--step-c:#f472b6">
+                    <div class="sg-step-row">
+                      <div class="sg-step-emoji">🎨</div>
+                      <div class="sg-step-info">
+                        <div class="sg-step-name">디자이너</div>
+                        <div class="sg-step-desc">Claude Design에 넘길 디자인 프롬프트 .md 추출</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- UI walkthrough -->
+              <section class="sg-section">
+                <div class="sg-section-title">🖱️ 화면 사용법</div>
+                <ol class="sg-tips">
+                  <li><b>좌측 카드 클릭</b> → 그 단계 캐릭터로 진입. 잠긴 카드는 이전 단계가 끝나야 풀림.</li>
+                  <li><b>가운데 채팅창</b> → 캐릭터와 대화. 한 번에 한 질문씩.</li>
+                  <li><b>우측 패널</b> → "📋 정리하기" 누르면 결과가 우측에 나옴 (직접 수정 가능).</li>
+                  <li><b>다음 캐릭터로 →</b> → 우측 결과가 .md 저장 + 다음 캐릭터에 자동 인계.</li>
+                  <li><b>특수 케이스</b>: 슬라이드는 채팅 없음 (.md 직접 편집), 부장님은 비판 모드.</li>
+                </ol>
+              </section>
+
+              <!-- Tips -->
+              <section class="sg-section">
+                <div class="sg-section-title">💡 팁</div>
+                <ul class="sg-tips bullet">
+                  <li><b>자료 첨부</b>: 과장님 상단 박스에 .md 첨부하면 자료 검토 모드로 진행</li>
+                  <li><b>웹 검색</b>: 리서처가 인터넷에서 객관 사실 자동 수집 (출처 포함)</li>
+                  <li><b>좌하단 비서</b>: 항상 캐릭터별 안내 문구 회전</li>
+                  <li><b>결과물</b>: 워크스페이스의 <code>biz-plan-results/</code> 폴더에 .md로 저장됨</li>
+                </ul>
+              </section>
+            </div>
+          </div>
+
+          <!-- Right: Guide (first entry per character) -->
+          <div class="right-mode hidden" data-rightmode="guide">
+            <div class="guide-panel">
+              <div class="guide-mascot-header">
+                <div class="guide-mascot-orb" id="guide-mascot-orb"></div>
+                <div class="guide-mascot-text">
+                  <div class="guide-headline" id="guide-headline"></div>
+                  <div class="guide-sub" id="guide-sub">시작하기 전에 잠깐 안내해드릴게요</div>
+                </div>
+              </div>
+
+              <ul class="guide-bullets" id="guide-bullets"></ul>
+
+              <div class="guide-pipeline">
+                <div class="pipeline-label">5단계 파이프라인</div>
+                <div class="pipeline-track" id="pipeline-track"></div>
+                <div class="pipeline-now" id="pipeline-now">지금 여기</div>
+              </div>
+
+              <button class="primary big" id="guide-start-btn">시작하기 →</button>
+            </div>
+          </div>
+
+          <!-- Right: Draft (chat-summary, critique, plan modes) -->
+          <div class="right-mode hidden" data-rightmode="draft">
+            <div class="section-title" id="right-title">정리된 산출물</div>
+            <div class="right-hint">대화 끝나고 정리한 결과예요. 직접 수정 가능합니다.</div>
+            <!-- Slide Agent only: collapsible accordion view + edit toggle -->
+            <div class="slide-accordion-wrap hidden" id="slide-accordion-wrap">
+              <div class="slide-accordion-toolbar">
+                <span class="accordion-label">슬라이드별 누적 — 제목 클릭하면 펼쳐져요</span>
+                <button class="ghost small" id="slide-edit-toggle">📝 직접 편집</button>
+              </div>
+              <div class="slide-accordion" id="slide-accordion"></div>
+            </div>
+            <textarea class="right-editor" id="right-editor" placeholder=""></textarea>
+          </div>
+
+          <!-- Right: Last Result (Researcher) -->
+          <div class="right-mode hidden" data-rightmode="lastresult">
+            <div class="section-title">📋 마지막 리서치 결과</div>
+            <div class="right-hint">가장 최근 리서치 결과 (수정 가능). 마지막 결과만 유지됩니다.</div>
+            <textarea class="right-editor" id="right-editor-research" placeholder=""></textarea>
+          </div>
+
+          <!-- Right: Boss 2-pane (Work Copy + Review Log tabs) -->
+          <div class="right-mode hidden" data-rightmode="boss-2pane">
+            <div class="boss-tabs">
+              <button class="boss-tab active" data-tab="work">📋 슬라이드 작업본</button>
+              <button class="boss-tab" data-tab="log">🔍 검토 로그 <span class="log-badge" id="log-badge">0</span></button>
+            </div>
+            <!-- Work Copy tab content (slide accordion, editable) -->
+            <div class="boss-tab-content" data-tab="work">
+              <div class="right-hint">부장님이 의견 적용할 때마다 슬라이드가 갱신됩니다. 직접 편집도 가능.</div>
+              <div class="slide-accordion-wrap" id="boss-workcopy-wrap">
+                <div class="slide-accordion-toolbar">
+                  <span class="accordion-label">수정 슬라이드 — 제목 클릭하면 펼쳐져요</span>
+                  <button class="ghost small" id="boss-workcopy-toggle">📝 직접 편집</button>
+                </div>
+                <div class="slide-accordion" id="boss-workcopy-accordion"></div>
+              </div>
+              <textarea class="right-editor hidden-by-toggle" id="boss-workcopy-editor" placeholder=""></textarea>
+            </div>
+            <!-- Review Log tab content -->
+            <div class="boss-tab-content hidden" data-tab="log">
+              <div class="right-hint">검토 의견 누적. 각 항목의 <b>✓ 작업본 반영</b> 누르면 AI가 작업본에 반영합니다. 반영된 항목은 가운데 줄로 표시.</div>
+              <div class="review-log-list" id="review-log-list"></div>
+            </div>
+          </div>
+
+          <!-- Right: Notes (Slide Agent) -->
+          <div class="right-mode hidden" data-rightmode="notes">
+            <div class="section-title">📝 수정 메모</div>
+            <div class="right-hint">슬라이드에 추가/수정하고 싶은 내용을 번호별로 적어주세요. 다음 단계(부장님)가 이 메모를 함께 봅니다.</div>
+            <div class="notes-list" id="notes-list"></div>
+            <button class="ghost small full" id="add-note">+ 메모 추가</button>
+          </div>
+        </div>
+
+        <div class="right-action hidden" id="right-action">
+          <button class="primary big" id="primary-btn"></button>
+        </div>
+
+        <button class="ghost small full" id="open-file-btn" style="margin-top: 8px; display:none;">📝 IDE에서 .md 열기</button>
+      </aside>
+
+    </div>
+
+    <!-- ===== COMPOSER ===== -->
+    <footer class="composer hidden" id="composer">
+      <textarea id="input" rows="2" placeholder=""></textarea>
+      <div class="composer-actions">
+        <button class="ghost" id="finalize-btn"></button>
+        <button class="primary" id="send-btn">전송</button>
+      </div>
+    </footer>
+
+    <div id="status-bar" class="status-bar hidden"></div>
+  </div>
+
+  <script>
+    const AGENT = /*AGENT*/;
+    const PREV = /*PREV*/;
+    const FINAL = /*FINAL*/;
+    const HISTORY = /*HISTORY*/;
+    const RIGHT_STATE = /*RIGHT_STATE*/;
+    const RESULTS_DIR = /*RESULTS_DIR*/;
+    /*JS*/
+  </script>
+</body>
+</html>
