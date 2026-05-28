@@ -1,7 +1,15 @@
 .vscode/**
 .vscode-test/**
-node_modules/.bin/**
-*.vsix
-.gitignore
 .git/**
+.gitignore
+*.vsix
 biz-plan-results/**
+
+# runtime 의존성만 포함, 나머지는 전부 제외
+node_modules/**
+!node_modules/@anthropic-ai/**
+node_modules/@anthropic-ai/**/.bin/**
+node_modules/@anthropic-ai/**/test/**
+node_modules/@anthropic-ai/**/tests/**
+node_modules/@anthropic-ai/**/*.md
+node_modules/@anthropic-ai/**/*.ts
