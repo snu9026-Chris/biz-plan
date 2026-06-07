@@ -50,8 +50,83 @@ function render() {
 document.getElementById('refresh').addEventListener('click', () => {
   vscode.postMessage({ type: 'refresh' });
 });
-document.getElementById('reset').addEventListener('click', () => {
-  vscode.postMessage({ type: 'reset' });
+
+// ===== 2-step inline reset confirm =====
+// stage 0: idle (confirm UI hidden)
+// stage 1: "정말 다 지우시겠어요?"   → click "네, 지울게요" → stage 2
+// stage 2: "정말로 진짜요?"          → click "진짜 진짜 지워요" → fire confirmReset
+// At any stage, "취소" returns to stage 0.
+
+const resetBtn     = document.getElementById('reset');
+const resetConfirm = document.getElementById('resetConfirm');
+const rcIcon       = document.getElementById('rc-icon');
+const rcTitle      = document.getElementById('rc-title');
+const rcDesc       = document.getElementById('rc-desc');
+const rcCancel     = document.getElementById('rc-cancel');
+const rcGo         = document.getElementById('rc-go');
+
+let resetStage = 0;
+
+function setStage(n) {
+  resetStage = n;
+  if (n === 0) {
+    resetConfirm.classList.add('hidden');
+    resetConfirm.classList.remove('stage-2', 'done');
+    resetConfirm.setAttribute('aria-hidden', 'true');
+    return;
+  }
+  resetConfirm.classList.remove('hidden', 'done');
+  resetConfirm.setAttribute('aria-hidden', 'false');
+  if (n === 1) {
+    resetConfirm.classList.remove('stage-2');
+    rcIcon.textContent  = '⚠️';
+    rcTitle.textContent = '정말 다 지우시겠어요?';
+    rcDesc.textContent  = '진행 중인 대화 + 우측 메모 + .md 결과물까지 전부 사라집니다. (이 폴더만 영향)';
+    rcCancel.textContent = '취소';
+    rcGo.textContent     = '네, 지울게요';
+  } else if (n === 2) {
+    resetConfirm.classList.add('stage-2');
+    rcIcon.textContent  = '🚨';
+    rcTitle.textContent = '정말로 진짜요? 마지막 확인.';
+    rcDesc.textContent  = '되돌릴 수 없습니다. 한 번 지우면 디스크에서도 사라져요.';
+    rcCancel.textContent = '아니, 취소';
+    rcGo.textContent     = '진짜 진짜 지워요';
+  } else if (n === 'done') {
+    resetConfirm.classList.remove('stage-2');
+    resetConfirm.classList.add('done');
+    rcIcon.textContent  = '✓';
+    rcTitle.textContent = '깨끗하게 초기화 완료';
+    rcDesc.textContent  = '새로 시작할 수 있습니다. 좌측에서 비서를 다시 눌러보세요.';
+    rcCancel.textContent = '닫기';
+    rcGo.textContent     = '닫기';
+  }
+}
+
+resetBtn.addEventListener('click', () => {
+  // Toggle: clicking reset while a confirm is open cancels it
+  if (resetStage !== 0) { setStage(0); return; }
+  setStage(1);
+});
+
+rcCancel.addEventListener('click', () => setStage(0));
+rcGo.addEventListener('click', () => {
+  if (resetStage === 1) {
+    setStage(2);
+  } else if (resetStage === 2) {
+    vscode.postMessage({ type: 'confirmReset' });
+    // extension will reply with 'resetDone' — we show the success card there
+  } else {
+    setStage(0);
+  }
+});
+
+// Listen for extension acknowledgement after wipe completes
+window.addEventListener('message', (event) => {
+  const msg = event.data;
+  if (msg && msg.type === 'resetDone') {
+    setStage('done');
+    setTimeout(() => setStage(0), 2400);
+  }
 });
 
 // ===== Character mascots (SVG art + cycling dialogue) =====

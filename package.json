@@ -2,7 +2,7 @@
   "name": "biz-plan-agent",
   "displayName": "Biz Plan Agent",
   "description": "7-step business plan pipeline with character agents (Research → Brief → Office Hours → Decision → Guide A → CEO Review → Final)",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "publisher": "snu90",
   "engines": {
     "vscode": "^1.85.0"

@@ -214,6 +214,12 @@ const App = {
   thinkingInterval: null,
   thinkingVerbIdx: 0,
 
+  // Non-blocking composer: input stays enabled during inference.
+  // Messages sent while busy are queued and auto-flushed when the turn ends.
+  // The server only ever processes one turn at a time (no concurrent calls).
+  isBusy: false,
+  pendingQueue: [], // [{ text, attachments, displayText }]
+
   // Boss 2-pane runtime
   bossReviewLog: (RIGHT_STATE && RIGHT_STATE.reviewLog) || [],
   bossWorkCopy: (RIGHT_STATE && RIGHT_STATE.workCopy) || PREV || '',
@@ -259,6 +265,7 @@ function cacheDOM() {
   DOM.rightAction = document.getElementById('right-action');
   DOM.inputEl = document.getElementById('input');
   DOM.avatarBig = document.getElementById('avatar-big');
+  DOM.pendingQueue = document.getElementById('pending-queue');
 }
 
 // =============================================================================
@@ -448,10 +455,17 @@ function setStatus(text, isError = false) {
 }
 
 function setBusy(busy) {
-  if (DOM.sendBtn) DOM.sendBtn.disabled = busy;
+  App.isBusy = busy;
+  // Input + send stay enabled at all times — typing/sending while busy enqueues.
+  if (DOM.inputEl) DOM.inputEl.disabled = false;
+  if (DOM.sendBtn) {
+    DOM.sendBtn.disabled = false;
+    DOM.sendBtn.textContent = busy ? '예약' : '전송';
+  }
+  // Finalize / next-step stay locked during a turn (they need a settled history).
   if (DOM.finalizeBtn) DOM.finalizeBtn.disabled = busy;
-  if (DOM.inputEl) DOM.inputEl.disabled = busy;
   if (DOM.primaryBtn) DOM.primaryBtn.disabled = busy;
+  if (!busy) flushQueue();
 }
 
 function showRightPanel() { DOM.mainGrid.classList.add('right-visible'); }
@@ -1182,17 +1196,25 @@ function initFileUpload() {
 // §15 Event wiring (send, finalize, primary)
 // =============================================================================
 
-function send() {
+// Read the composer + attachments into a turn payload. Returns null if empty.
+function readComposerTurn() {
   const text = DOM.inputEl.value.trim();
   const attachments = App.fileUpload ? App.fileUpload.getFiles() : [];
-  if (!text && attachments.length === 0) return;
+  if (!text && attachments.length === 0) return null;
 
   let displayText = text;
   if (attachments.length > 0) {
     displayText += `\n\n[첨부 ${attachments.length}개: ${attachments.map((a) => a.name).join(', ')}]`;
   }
+  // Snapshot + clear the upload widget so the next message starts clean.
+  if (App.fileUpload && attachments.length > 0) App.fileUpload.clearFiles();
+  return { text, attachments, displayText };
+}
+
+// Actually dispatch a turn to the server (renders the user bubble + fires the call).
+function dispatchTurn(turn) {
   if (App.mode !== 'result-rerequest-rightcopy') {
-    addBubble('user', displayText);
+    addBubble('user', turn.displayText);
   } else {
     // Render user request as a card in research mode
     const card = document.createElement('div');
@@ -1200,18 +1222,77 @@ function send() {
     card.style.borderLeftColor = '#cbd5e1';
     card.innerHTML = `<div class="research-card-meta">사용자 요청</div>`;
     const txt = document.createElement('div');
-    txt.textContent = displayText;
+    txt.textContent = turn.displayText;
     card.appendChild(txt);
     document.getElementById('research-result').appendChild(card);
   }
-  App.history.push({ role: 'user', content: text || '(첨부 파일 검토 부탁)' });
+  App.history.push({ role: 'user', content: turn.text || '(첨부 파일 검토 부탁)' });
 
-  DOM.inputEl.value = '';
   setBusy(true);
   showThinking();
-  API.sendChat(text, attachments);
+  API.sendChat(turn.text, turn.attachments);
+}
 
-  if (App.fileUpload && attachments.length > 0) App.fileUpload.clearFiles();
+function send() {
+  const turn = readComposerTurn();
+  if (!turn) return;
+  DOM.inputEl.value = '';
+
+  if (App.isBusy) {
+    // A turn is in flight — queue it. flushQueue() sends it when the turn ends.
+    App.pendingQueue.push(turn);
+    renderQueue();
+    return;
+  }
+  dispatchTurn(turn);
+}
+
+// Send the next queued turn once the server is idle again.
+function flushQueue() {
+  if (App.isBusy) return;
+  if (App.pendingQueue.length === 0) { renderQueue(); return; }
+  const next = App.pendingQueue.shift();
+  renderQueue();
+  dispatchTurn(next);
+}
+
+function removeFromQueue(idx) {
+  App.pendingQueue.splice(idx, 1);
+  renderQueue();
+}
+
+// Render the pending-message chips above the textarea.
+function renderQueue() {
+  const host = DOM.pendingQueue;
+  if (!host) return;
+  if (App.pendingQueue.length === 0) {
+    host.classList.add('hidden');
+    host.innerHTML = '';
+    return;
+  }
+  host.classList.remove('hidden');
+  host.innerHTML = '';
+  const label = document.createElement('span');
+  label.className = 'pending-queue-label';
+  label.textContent = `예약된 메시지 ${App.pendingQueue.length}개 · 응답 끝나면 순서대로 전송`;
+  host.appendChild(label);
+  App.pendingQueue.forEach((turn, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'pending-chip';
+    const preview = (turn.text || turn.displayText || '(첨부)').replace(/\s+/g, ' ').trim();
+    const txt = document.createElement('span');
+    txt.className = 'pending-chip-text';
+    txt.textContent = preview.length > 40 ? preview.slice(0, 40) + '…' : preview;
+    txt.title = turn.displayText;
+    chip.appendChild(txt);
+    const rm = document.createElement('button');
+    rm.className = 'pending-chip-remove';
+    rm.textContent = '×';
+    rm.title = '예약 취소';
+    rm.addEventListener('click', () => removeFromQueue(i));
+    chip.appendChild(rm);
+    host.appendChild(chip);
+  });
 }
 
 function onFinalizeClick() {

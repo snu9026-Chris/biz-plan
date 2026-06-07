@@ -15,13 +15,29 @@
         <div class="subtitle">5-step pipeline</div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" id="refresh" title="상태 새로고침 (.md 파일 변경사항 반영)">
+        <button class="icon-btn" id="refresh" title="다시 로드 — 저장된 대화·작업물을 디스크에서 다시 불러와 화면에 강제 반영">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
         </button>
         <button class="icon-btn danger" id="reset" title="전체 초기화 (모든 .md 결과 + 대화 삭제)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Inline 2-step reset confirmation. Lives between header and agent list. -->
+  <div id="resetConfirm" class="reset-confirm hidden" role="alertdialog" aria-hidden="true">
+    <div class="rc-stripe"></div>
+    <div class="rc-body">
+      <div class="rc-icon" id="rc-icon">⚠️</div>
+      <div class="rc-text">
+        <div class="rc-title" id="rc-title">정말 다 지우시겠어요?</div>
+        <div class="rc-desc" id="rc-desc">진행 중인 대화 + 우측 메모 + .md 결과물까지 전부 사라집니다. (이 폴더만)</div>
+      </div>
+    </div>
+    <div class="rc-actions">
+      <button class="rc-btn rc-cancel" id="rc-cancel">취소</button>
+      <button class="rc-btn rc-go" id="rc-go">네, 지울게요</button>
     </div>
   </div>
 

@@ -397,3 +397,154 @@ button {
 
 /* hide utility */
 .hidden { display: none !important; }
+
+/* =================================================================== */
+/* Reset confirm — inline 2-step destructive action UI                  */
+/* Stage 1: warning yellow · Stage 2: danger red                        */
+/* =================================================================== */
+
+.reset-confirm {
+  position: relative;
+  z-index: 5;
+  margin: 12px 14px 8px;
+  background: #ffffff;
+  border: 1px solid #f5d4a8;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 26px rgba(245, 158, 11, 0.15), 0 2px 6px rgba(0, 0, 0, 0.04);
+  animation: rc-slide-in 0.32s cubic-bezier(0.34, 1.36, 0.64, 1) both;
+}
+
+.reset-confirm.stage-2 {
+  border-color: #fca5a5;
+  box-shadow: 0 12px 32px rgba(239, 68, 68, 0.22), 0 2px 6px rgba(0, 0, 0, 0.05);
+  animation: rc-shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes rc-slide-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rc-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-4px); }
+  40%      { transform: translateX(4px); }
+  60%      { transform: translateX(-2px); }
+  80%      { transform: translateX(2px); }
+}
+
+.reset-confirm .rc-stripe {
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%);
+}
+.reset-confirm.stage-2 .rc-stripe {
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 50%, #dc2626 100%);
+  height: 4px;
+}
+
+.reset-confirm .rc-body {
+  display: flex;
+  gap: 12px;
+  padding: 14px 14px 10px;
+  align-items: flex-start;
+}
+
+.reset-confirm .rc-icon {
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08));
+}
+
+.reset-confirm .rc-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.reset-confirm .rc-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  line-height: 1.35;
+}
+.reset-confirm.stage-2 .rc-title {
+  color: #b91c1c;
+}
+
+.reset-confirm .rc-desc {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+.reset-confirm .rc-actions {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 12px;
+  justify-content: flex-end;
+}
+
+.reset-confirm .rc-btn {
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  letter-spacing: -0.005em;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.reset-confirm .rc-cancel {
+  background: var(--card);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+.reset-confirm .rc-cancel:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.reset-confirm .rc-go {
+  background: #f59e0b;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+}
+.reset-confirm .rc-go:hover {
+  background: #d97706;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(245, 158, 11, 0.45);
+}
+
+.reset-confirm.stage-2 .rc-go {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+}
+.reset-confirm.stage-2 .rc-go:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.5);
+}
+
+/* Success flash after reset completes */
+.reset-confirm.done {
+  border-color: #86efac;
+  box-shadow: 0 8px 26px rgba(34, 197, 94, 0.2);
+  animation: rc-pulse-done 1s ease;
+}
+.reset-confirm.done .rc-stripe {
+  background: linear-gradient(90deg, #10b981 0%, #22c55e 50%, #10b981 100%);
+}
+.reset-confirm.done .rc-title {
+  color: #16a34a;
+}
+@keyframes rc-pulse-done {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.015); }
+  100% { transform: scale(1); }
+}

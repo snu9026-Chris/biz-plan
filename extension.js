@@ -171,6 +171,162 @@ function getRightState(agentId) {
 
 function mergeRightState(agentId, patch) {
   State.rightPanelState[agentId] = { ...(State.rightPanelState[agentId] || {}), ...patch };
+  persistState();
+}
+
+// Persist chatHistories + rightPanelState to a per-folder JSON file on disk.
+// This means: each results folder gets its own state — switching folders gives
+// a blank slate, returning to a previous folder restores its chat + right panel.
+// Survives IDE restart, panel close, anything except actual file deletion.
+//
+// Also writes human-readable .md logs of every chat to <resultsDir>/.biz-plan-logs/
+// (display only — extension reads back from .biz-plan-state.json, not the .md).
+
+function getStateFilePath() {
+  return path.join(getResultsDir(), '.biz-plan-state.json');
+}
+
+function getLogsDir() {
+  return path.join(getResultsDir(), '.biz-plan-logs');
+}
+
+function persistState() {
+  try {
+    ensureDir(getResultsDir());
+    const data = {
+      version: 1,
+      savedAt: new Date().toISOString(),
+      chatHistories: State.chatHistories,
+      rightPanelState: State.rightPanelState,
+    };
+    fs.writeFileSync(getStateFilePath(), JSON.stringify(data, null, 2), 'utf8');
+    writeReadableLogs();
+  } catch (e) {
+    // best-effort — never break the chat flow if disk is unavailable
+    console.error('[biz-plan-agent] persistState failed:', e);
+  }
+}
+
+function loadState() {
+  // Reset memory first — moving to a folder with no state.json = blank slate
+  State.chatHistories = {};
+  State.rightPanelState = {};
+  try {
+    const p = getStateFilePath();
+    if (!fs.existsSync(p)) return;
+    const raw = fs.readFileSync(p, 'utf8');
+    const data = JSON.parse(raw);
+    if (data && typeof data === 'object') {
+      if (data.chatHistories && typeof data.chatHistories === 'object') {
+        State.chatHistories = data.chatHistories;
+      }
+      if (data.rightPanelState && typeof data.rightPanelState === 'object') {
+        State.rightPanelState = data.rightPanelState;
+      }
+    }
+  } catch (e) {
+    console.error('[biz-plan-agent] loadState failed:', e);
+  }
+}
+
+// Write per-agent chat + right panel as human-readable .md inside .biz-plan-logs/
+// so the user can browse "every conversation that ever happened" alongside the
+// official .md outputs. Extension does NOT read these back — they are display only.
+function writeReadableLogs() {
+  try {
+    const dir = getLogsDir();
+    ensureDir(dir);
+    for (const agent of AGENTS) {
+      const history = State.chatHistories[agent.id];
+      const right = State.rightPanelState[agent.id];
+      if ((!history || history.length === 0) && !right) continue;
+      const lines = [];
+      lines.push(`# ${agent.emoji} ${agent.label} — 대화 로그`);
+      lines.push('');
+      lines.push(`_자동 저장: ${new Date().toISOString()}_`);
+      lines.push('');
+      if (history && history.length) {
+        lines.push('## 💬 대화');
+        lines.push('');
+        for (const m of history) {
+          const role = m.role === 'user' ? '🧑 사용자' : '🤖 ' + agent.label;
+          lines.push(`### ${role}`);
+          lines.push('');
+          lines.push(String(m.content || ''));
+          lines.push('');
+        }
+      }
+      if (right) {
+        lines.push('## 📋 우측 패널 상태');
+        lines.push('');
+        if (right.draft) {
+          lines.push('### Draft');
+          lines.push('');
+          lines.push(right.draft);
+          lines.push('');
+        }
+        // notes is a string[] (one entry per memo); render as a numbered list.
+        // Tolerate a legacy string value too.
+        const notesArr = Array.isArray(right.notes)
+          ? right.notes.filter((n) => n && n.trim())
+          : (right.notes && right.notes.trim() ? [right.notes] : []);
+        if (notesArr.length) {
+          lines.push('### Notes');
+          lines.push('');
+          notesArr.forEach((n, i) => lines.push(`${i + 1}. ${n}`));
+          lines.push('');
+        }
+        if (right.workCopy) {
+          lines.push('### Work copy');
+          lines.push('');
+          lines.push(right.workCopy);
+          lines.push('');
+        }
+        if (right.reviewLog && right.reviewLog.length) {
+          lines.push('### Review log');
+          lines.push('');
+          lines.push('```json');
+          lines.push(JSON.stringify(right.reviewLog, null, 2));
+          lines.push('```');
+          lines.push('');
+        }
+      }
+      const fname = `${agent.id}.md`;
+      fs.writeFileSync(path.join(dir, fname), lines.join('\n'), 'utf8');
+    }
+  } catch (e) {
+    console.error('[biz-plan-agent] writeReadableLogs failed:', e);
+  }
+}
+
+// Wipe everything: state.json, readable logs, .md outputs, in-memory state.
+// Used by sidebar's 2-step inline confirm + command palette reset.
+function doReset() {
+  // Whitelist-only deletion: never blindly empty the results dir, because the
+  // user can point it at an arbitrary folder (customResultsDir) that holds
+  // unrelated files. We delete ONLY the artifacts this extension creates:
+  //   - each agent's output .md (e.g. 00_secretary.md … 05_designer.md)
+  //   - .biz-plan-state.json
+  //   - the .biz-plan-logs/ directory (our readable chat logs)
+  const dir = getResultsDir();
+  const rm = (p) => { try { fs.unlinkSync(p); } catch {} };
+
+  for (const agent of AGENTS) {
+    if (agent.output) rm(path.join(dir, agent.output));
+  }
+  rm(getStateFilePath());
+
+  const logsDir = getLogsDir();
+  try {
+    if (fs.existsSync(logsDir)) {
+      for (const inner of fs.readdirSync(logsDir)) rm(path.join(logsDir, inner));
+      try { fs.rmdirSync(logsDir); } catch {}
+    }
+  } catch {}
+
+  for (const k of Object.keys(State.chatHistories)) delete State.chatHistories[k];
+  for (const k of Object.keys(State.rightPanelState)) delete State.rightPanelState[k];
+  // state.json was deleted above; nothing to persist now
 }
 
 // =============================================================================
@@ -389,6 +545,7 @@ async function handleChat(agent, userText, attachments) {
   } catch (err) {
     postToWebview({ type: 'error', value: String(err.message || err) });
   }
+  persistState();
 }
 
 async function handleFinalize(agent) {
@@ -514,6 +671,7 @@ function ensureBossState(agent, prevContent) {
   if (!cur.reviewLog) cur.reviewLog = [];
   if (typeof cur.workCopy !== 'string') cur.workCopy = prevContent || '';
   State.rightPanelState[agent.id] = cur;
+  persistState();
   return cur;
 }
 
@@ -527,6 +685,7 @@ function handlePinReviewLog(agent, content) {
     appliedAt: null,
     createdAt: Date.now(),
   });
+  persistState();
   postToWebview({ type: 'reviewLogUpdated', reviewLog: state.reviewLog });
 }
 
@@ -536,12 +695,14 @@ function handleUnapplyReviewLogEntry(agent, entryId) {
   if (!entry) return;
   entry.applied = false;
   entry.appliedAt = null;
+  persistState();
   postToWebview({ type: 'reviewLogUpdated', reviewLog: state.reviewLog });
 }
 
 function handleDeleteReviewLogEntry(agent, entryId) {
   const state = ensureBossState(agent, '');
   state.reviewLog = state.reviewLog.filter((e) => e.id !== entryId);
+  persistState();
   postToWebview({ type: 'reviewLogUpdated', reviewLog: state.reviewLog });
 }
 
@@ -591,6 +752,7 @@ async function handleApplyReviewLogEntry(agent, entryId) {
     };
     entry.applied = true;
     entry.appliedAt = Date.now();
+    persistState();
     postToWebview({
       type: 'workCopyUpdated',
       workCopy: state.workCopy,
@@ -606,6 +768,7 @@ async function handleApplyReviewLogEntry(agent, entryId) {
 function handleDismissChangeIndicators(agent) {
   const cur = State.rightPanelState[agent.id];
   if (cur) delete cur.recentChanges;
+  persistState();
   postToWebview({ type: 'changeIndicatorsCleared' });
 }
 
@@ -630,11 +793,28 @@ class SidebarProvider {
       if (msg.type === 'openAgent') openCenterPanel(msg.agentId);
       else if (msg.type === 'refresh') this.refresh();
       else if (msg.type === 'reset') vscode.commands.executeCommand('bizPlanAgent.reset');
+      else if (msg.type === 'confirmReset') {
+        // Sidebar already showed 2-step inline confirm — skip modal, just wipe.
+        // refresh() reloads disk state + re-renders sidebar AND center panel.
+        doReset();
+        this.refresh();
+        // Tell sidebar to reset its confirm state and animate the success
+        if (this._view) this._view.webview.postMessage({ type: 'resetDone' });
+      }
     });
   }
 
   refresh() {
+    // Hard reload: re-read persisted state from disk (.biz-plan-state.json),
+    // then re-render the sidebar (DONE badges) and the open center panel so the
+    // on-screen conversation + work artifacts exactly match what's saved on disk.
+    // mergeRightState/handleChat persist on every edit, so nothing in-memory is
+    // newer than disk — this reload never loses work.
+    loadState();
     if (this._view) this._view.webview.html = this.renderHtml();
+    if (State.centerPanel && State.currentAgentId) {
+      renderCenterPanel(getAgent(State.currentAgentId));
+    }
   }
 
   renderHtml() {
@@ -665,6 +845,7 @@ function openCenterPanel(agentId) {
   if (!State.chatHistories[agent.id]) State.chatHistories[agent.id] = [];
   if (State.chatHistories[agent.id].length === 0 && agent.greeting) {
     State.chatHistories[agent.id] = [{ role: 'assistant', content: agent.greeting }];
+    persistState();
   }
 
   if (State.centerPanel) {
@@ -789,31 +970,23 @@ function registerCommands(context, provider) {
         const fsPath = picked[0].fsPath;
         await context.globalState.update('customResultsDir', fsPath);
         vscode.window.showInformationMessage(`산출물 저장 폴더: ${fsPath}`);
+        // refresh() reloads that folder's .biz-plan-state.json (or blank slate)
+        // and re-renders the sidebar + open center panel.
         provider.refresh();
-        if (State.centerPanel && State.currentAgentId) {
-          renderCenterPanel(getAgent(State.currentAgentId));
-        }
       }
     })
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('bizPlanAgent.reset', async () => {
+      // Command palette entry still uses native modal (2-step is sidebar-only)
       const confirm = await vscode.window.showWarningMessage(
         'Reset all pipeline results & chat history?',
         { modal: true }, 'Reset'
       );
       if (confirm !== 'Reset') return;
-      const dir = getResultsDir();
-      if (fs.existsSync(dir)) {
-        for (const f of fs.readdirSync(dir)) fs.unlinkSync(path.join(dir, f));
-      }
-      for (const k of Object.keys(State.chatHistories)) delete State.chatHistories[k];
-      for (const k of Object.keys(State.rightPanelState)) delete State.rightPanelState[k];
-      provider.refresh();
-      if (State.centerPanel && State.currentAgentId) {
-        renderCenterPanel(getAgent(State.currentAgentId));
-      }
+      doReset();
+      provider.refresh(); // reloads disk state + re-renders sidebar & center panel
       vscode.window.showInformationMessage('Pipeline reset.');
     })
   );
@@ -821,6 +994,7 @@ function registerCommands(context, provider) {
 
 function activate(context) {
   State.context = context;
+  loadState();
   const provider = new SidebarProvider(context.extensionUri);
 
   context.subscriptions.push(
@@ -828,11 +1002,6 @@ function activate(context) {
   );
 
   registerCommands(context, provider);
-
-  // Auto-open the secretary on activation
-  setTimeout(() => {
-    if (!State.centerPanel) openCenterPanel('00_secretary');
-  }, 500);
 }
 
 function deactivate() {}

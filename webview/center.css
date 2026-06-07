@@ -1327,6 +1327,59 @@ h1 {
 }
 
 /* ===== Composer ===== */
+/* ===== Pending queue (messages typed while a turn is in flight) ===== */
+.pending-queue {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  background: color-mix(in srgb, var(--char-color, var(--primary)) 7%, white);
+  border: 1px dashed color-mix(in srgb, var(--char-color, var(--primary)) 45%, transparent);
+  border-radius: 10px;
+}
+.pending-queue.hidden { display: none; }
+.pending-queue-label {
+  width: 100%;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--char-color, var(--primary-dark));
+  opacity: 0.85;
+}
+.pending-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 4px 4px 4px 10px;
+  background: white;
+  border: 1px solid color-mix(in srgb, var(--char-color, var(--primary)) 35%, var(--border));
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text);
+}
+.pending-chip-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pending-chip-remove {
+  flex-shrink: 0;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  line-height: 1;
+  border-radius: 50%;
+  border: none;
+  background: color-mix(in srgb, var(--char-color, var(--primary)) 12%, transparent);
+  color: var(--char-color, var(--primary-dark));
+  font-size: 13px;
+}
+.pending-chip-remove:hover {
+  background: color-mix(in srgb, var(--char-color, var(--primary)) 25%, transparent);
+}
+
 .composer {
   flex-shrink: 0;
   padding: 12px 0 16px;
