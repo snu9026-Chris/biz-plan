@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Biz Plan Agent — clipboard motif
+       - rounded square background: brand purple→navy gradient
+       - clipboard body: warm off-white
+       - top clip: gold
+       - 3 progress lines (representing pipeline steps) + ✦ accent (matches header logo) -->
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6d5dd1"/>
+      <stop offset="55%" stop-color="#3b2a6b"/>
+      <stop offset="100%" stop-color="#1a1f3a"/>
+    </linearGradient>
+    <linearGradient id="board" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbfaf6"/>
+      <stop offset="100%" stop-color="#ece6d8"/>
+    </linearGradient>
+    <linearGradient id="clip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fcd34d"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#000" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <!-- App background -->
+  <rect x="0" y="0" width="1024" height="1024" rx="220" ry="220" fill="url(#bg)"/>
+
+  <!-- subtle inner highlight -->
+  <rect x="0" y="0" width="1024" height="520" rx="220" ry="220" fill="white" opacity="0.05"/>
+
+  <!-- Clipboard board -->
+  <g filter="url(#shadow)">
+    <rect x="232" y="216" width="560" height="660" rx="44" ry="44" fill="url(#board)"/>
+  </g>
+
+  <!-- Clip head (gold) -->
+  <g>
+    <!-- back plate of the clip -->
+    <rect x="402" y="168" width="220" height="120" rx="28" ry="28" fill="url(#clip)"/>
+    <!-- inner cutout -->
+    <rect x="448" y="200" width="128" height="56" rx="16" ry="16" fill="#1a1f3a"/>
+  </g>
+
+  <!-- Progress lines (5-step pipeline — short to long, suggesting growth) -->
+  <g fill="#5d4ea6">
+    <rect x="312" y="438" width="320" height="22" rx="11"/>
+    <rect x="312" y="500" width="400" height="22" rx="11"/>
+    <rect x="312" y="562" width="260" height="22" rx="11"/>
+  </g>
+
+  <!-- ✦ accent star (matches header logo) -->
+  <g transform="translate(640 700)">
+    <path d="M 0 -78
+             L 18 -18
+             L 78 0
+             L 18 18
+             L 0 78
+             L -18 18
+             L -78 0
+             L -18 -18 Z"
+          fill="#fbbf24"/>
+    <circle cx="0" cy="0" r="10" fill="#fffbe6"/>
+  </g>
+</svg>

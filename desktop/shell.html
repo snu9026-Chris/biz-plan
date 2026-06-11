@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Biz Plan Agent</title>
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; background: #0f0f1a; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #fff; }
+  .app-shell { display: grid; grid-template-columns: 320px 1fr; height: 100vh; }
+  iframe { border: 0; width: 100%; height: 100%; background: transparent; display: block; }
+  .iframe-wrap { position: relative; overflow: hidden; }
+  .iframe-wrap.sidebar { border-right: 1px solid rgba(255,255,255,0.06); }
+  .center-empty {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%; color: #6b7280; font-size: 14px;
+  }
+  /* Floating "🔐 인증" pill in the top-right corner. Single, minimal entry
+     point for changing auth method. Desktop-only chrome, doesn't exist in
+     vsix. Tooltip on hover reveals the current method. */
+  .auth-pill {
+    position: fixed; top: 10px; right: 12px; z-index: 9999;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #b6b0d4;
+    font-size: 11px; font-weight: 500;
+    padding: 5px 10px; border-radius: 999px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.15s ease;
+    user-select: none;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .auth-pill:hover { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.35); color: #fbbf24; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="iframe-wrap sidebar">
+    <iframe id="sidebar-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+  </div>
+  <div class="iframe-wrap center">
+    <div id="center-empty" class="center-empty">에이전트를 선택하세요...</div>
+    <iframe id="center-iframe" sandbox="allow-scripts allow-same-origin" style="display:none;"></iframe>
+  </div>
+</div>
+
+<div class="auth-pill" id="auth-pill" title="인증 방법 변경">🔐 <span id="auth-pill-label">인증</span></div>
+
+<script>
+  // ---- iframe HTML loaders ----
+  // VSCode webviews use `acquireVsCodeApi()` which returns { postMessage(msg) }.
+  // We inject a shim that pushes to the parent window, which then forwards over IPC.
+  const BOOTSTRAP = `<script>
+    (function () {
+      var _state = {};
+      window.acquireVsCodeApi = function () {
+        return {
+          postMessage: function (msg) {
+            window.parent.postMessage({ __bizPlanFromIframe: true, msg: msg }, '*');
+          },
+          getState: function () { return _state; },
+          setState: function (s) { _state = s; },
+        };
+      };
+    })();
+  <\/script>`;
+
+  function loadIframe(iframe, htmlString) {
+    var modified = htmlString.replace(/<head([^>]*)>/i, '<head$1>' + BOOTSTRAP);
+    iframe.srcdoc = modified;
+  }
+
+  var sidebar = document.getElementById('sidebar-iframe');
+  var center  = document.getElementById('center-iframe');
+  var centerEmpty = document.getElementById('center-empty');
+  var centerVisible = false;
+
+  // ---- Receive html / messages FROM main (extension.js via shim) ----
+  window.electronHost.onHostMessage(function (env) {
+    if (env.kind === 'setHtml') {
+      if (env.target === 'sidebar') loadIframe(sidebar, env.html);
+      else if (env.target === 'center') loadIframe(center, env.html);
+    } else if (env.kind === 'post') {
+      var iframe = env.target === 'sidebar' ? sidebar : center;
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.postMessage(env.msg, '*');
+      }
+    } else if (env.kind === 'createCenter') {
+      if (!centerVisible) {
+        center.style.display = 'block';
+        centerEmpty.style.display = 'none';
+        centerVisible = true;
+      }
+      document.title = env.title || 'Biz Plan Agent';
+    } else if (env.kind === 'setTitle') {
+      if (env.target === 'center') document.title = env.title;
+    }
+  });
+
+  // ---- Forward iframe → main ----
+  window.addEventListener('message', function (e) {
+    if (!e.data || !e.data.__bizPlanFromIframe) return;
+    var src = (e.source === sidebar.contentWindow) ? 'sidebar'
+            : (e.source === center.contentWindow) ? 'center'
+            : null;
+    if (!src) return;
+    window.electronHost.sendToHost(src, e.data.msg);
+  });
+
+  // ---- Auth pill: show current method in tooltip + confirm before reset ----
+  var pill = document.getElementById('auth-pill');
+  var pillLabel = document.getElementById('auth-pill-label');
+  if (window.electronAuth && window.electronAuth.getCurrentMethod) {
+    window.electronAuth.getCurrentMethod().then(function (m) {
+      if (m === 'cli') { pillLabel.textContent = 'Pro/Max'; pill.title = '인증: Claude Pro/Max 구독 — 클릭해서 변경'; }
+      else if (m === 'key') { pillLabel.textContent = 'API'; pill.title = '인증: Anthropic API Key — 클릭해서 변경'; }
+      else { pillLabel.textContent = '인증'; pill.title = '인증 방법 변경'; }
+    });
+  }
+  pill.addEventListener('click', function () {
+    if (confirm('인증 방법을 변경하시겠어요?\n(현재 저장된 Claude Code 설정 / API Key가 지워집니다)')) {
+      window.electronAuth.signOut();
+    }
+  });
+</script>
+</body>
+</html>

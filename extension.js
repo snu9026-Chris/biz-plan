@@ -14,7 +14,10 @@
 //   §10 Extension lifecycle (activate / deactivate / commands)
 // =============================================================================
 
-const vscode = require('vscode');
+// Desktop (Electron) build injects a shim into globalThis before this file is
+// required, so we don't actually call require('vscode') when running outside
+// the IDE. The .vsix build path is unchanged.
+const vscode = globalThis.__bizPlanVscode || require('vscode');
 const fs = require('fs');
 const path = require('path');
 

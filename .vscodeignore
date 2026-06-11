@@ -4,6 +4,8 @@
 .gitignore
 *.vsix
 biz-plan-results/**
+desktop/**
+dist-electron/**
 
 # runtime 의존성만 포함, 나머지는 전부 제외
 node_modules/**

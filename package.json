@@ -68,7 +68,10 @@
     }
   },
   "scripts": {
-    "package": "vsce package"
+    "package": "vsce package",
+    "electron": "electron desktop/main.js",
+    "dist:win": "node desktop/build-installer.js win",
+    "dist:mac": "node desktop/build-installer.js mac"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.1.0",
@@ -76,6 +79,46 @@
   },
   "devDependencies": {
     "@types/vscode": "^1.85.0",
-    "@vscode/vsce": "^2.20.0"
+    "@vscode/vsce": "^2.20.0",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.snu90.bizplanagent",
+    "productName": "Biz Plan Agent",
+    "files": [
+      "desktop/**/*",
+      "extension.js",
+      "webview/**/*",
+      "prompts/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist-electron"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] }
+      ],
+      "icon": "desktop/icon.ico",
+      "artifactName": "BizPlanAgent-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Biz Plan Agent",
+      "installerIcon": "desktop/icon.ico",
+      "uninstallerIcon": "desktop/icon.ico",
+      "installerHeaderIcon": "desktop/icon.ico"
+    },
+    "mac": {
+      "target": ["dmg"],
+      "category": "public.app-category.productivity",
+      "icon": "desktop/icon.png",
+      "artifactName": "BizPlanAgent-${version}.${ext}"
+    }
   }
 }
